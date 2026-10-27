@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="Quiz interactif sur les Ressources Humaines">
+
+    <title>RH Challenge - Quiz Ressources Humaines</title>
+
+    <style>
+        /* ================================
+           VARIABLES
+        ================================= */
+        :root {
+            --primary: #6c3fb5;
+            --primary-dark: #4d2785;
+            --secondary: #f4b942;
+            --success: #20a464;
+            --danger: #dc3545;
+            --dark: #1f2430;
+            --gray: #6b7280;
+            --light: #f5f6fa;
+            --white: #ffffff;
+            --border: #e5e7eb;
+        }
+
+        /* ================================
+           RESET
+        ================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #f5f0ff, #eef4ff);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        /* ================================
+           HEADER
+        ================================= */
+        header {
+            background: linear-gradient(
+                135deg,
+                var(--primary-dark),
+                var(--primary)
+            );
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            opacity: 0.9;
+        }
+
+        /* ================================
+           CONTAINER
+        ================================= */
+        .container {
+            width: 95%;
+            max-width: 900px;
+            margin: 35px auto;
+        }
+
+        /* ================================
+           START SCREEN
+        ================================= */
+        .start-screen {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 45px 30px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.10);
+        }
+
+        .start-icon {
+            font-size: 65px;
+            margin-bottom: 20px;
+        }
+
+        .start-screen h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .start-screen p {
+            color: var(--gray);
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .rules {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .rule {
+            background: var(--light);
+            padding: 18px;
+            border-radius: 12px;
+        }
+
+        .rule strong {
+            display: block;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        /* ================================
+           BUTTON
+        ================================= */
+        .btn {
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* ================================
+           QUIZ
+        ================================= */
+        .quiz-card {
+            display: none;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.10);
+        }
+
+        .quiz-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .question-number {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .timer {
+            background: #fff4d6;
+            color: #8a6100;
+            padding: 9px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        /* Progression */
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #e9e9ef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.4s ease;
+        }
+
+        /* Question */
+
+        .question {
+            font-size: 1.4rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        /* Answers */
+
+        .answers {
+            display: grid;
+            gap: 14px;
+        }
+
+        .answer {
+            border: 2px solid var(--border);
+            background: white;
+            padding: 17px;
+            border-radius: 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.25s;
+            font-size: 1rem;
+        }
+
+        .answer:hover {
+            border-color: var(--primary);
+            background: #faf8ff;
+            transform: translateX(3px);
+        }
+
+        .answer.correct {
+            border-color: var(--success);
+            background: #eaf8f1;
+            color: #146b42;
+        }
+
+        .answer.incorrect {
+            border-color: var(--danger);
+            background: #fff0f1;
+            color: #a51f2d;
+        }
+
+        .answer:disabled {
+            cursor: not-allowed;
+        }
+
+        /* Feedback */
+
+        .feedback {
+            display: none;
+            margin-top: 20px;
+            padding: 17px;
+            border-radius: 12px;
+            line-height: 1.6;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #eaf8f1;
+            border-left: 5px solid var(--success);
+        }
+
+        .feedback.error {
+            background: #fff0f1;
+            border-left: 5px solid var(--danger);
+        }
+
+        /* Next button */
+
+        .next-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        #nextBtn {
+            display: none;
+        }
+
+        /* ================================
+           RESULT
+        ================================= */
+        .result-screen {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 45px 30px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.10);
+        }
+
+        .result-icon {
+            font-size: 70px;
+            margin-bottom: 15px;
+        }
+
+        .result-screen h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .score {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 20px;
+        }
+
+        .result-message {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 25px;
+        }
+
+        .result-details {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: var(--light);
+            padding: 18px 25px;
+            border-radius: 12px;
+            min-width: 130px;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        /* ================================
+           FOOTER
+        ================================= */
+        footer {
+            text-align: center;
+            color: var(--gray);
+            padding: 25px;
+            font-size: 0.9rem;
+        }
+
+        /* ================================
+           RESPONSIVE
+        ================================= */
+        @media (max-width: 700px) {
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .rules {
+                grid-template-columns: 1fr;
+            }
+
+            .quiz-card,
+            .start-screen,
+            .result-screen {
+                padding: 25px 18px;
+            }
+
+            .question {
+                font-size: 1.2rem;
+            }
+
+            .quiz-top {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .timer {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>RH CHALLENGE</h1>
+    <p>Testez vos connaissances en Ressources Humaines</p>
+</header>
+
+<main class="container">
+
+    <!-- ================================
+         ÉCRAN D'ACCUEIL
+    ================================= -->
+
+    <section class="start-screen" id="startScreen">
+
+        <div class="start-icon">👩🏽‍💼</div>
+
+        <h2>Bienvenue dans RH Challenge</h2>
+
+        <p>
+            Un quiz ludique pour tester vos connaissances
+            en gestion des Ressources Humaines.
+        </p>
+
+        <div class="rules">
+
+            <div class="rule">
+                <strong>10</strong>
+                Questions
+            </div>
+
+            <div class="rule">
+                <strong>30 sec</strong>
+                Par question
+            </div>
+
+            <div class="rule">
+                <strong>+10 pts</strong>
+                Bonne réponse
+            </div>
+
+        </div>
+
+        <button class="btn btn-primary" onclick="startQuiz()">
+            Commencer le quiz
+        </button>
+
+    </section>
+
+
+    <!-- ================================
+         QUIZ
+    ================================= -->
+
+    <section class="quiz-card" id="quizCard">
+
+        <div class="quiz-top">
+
+            <div class="question-number">
+                Question <span id="currentQuestion">1</span>
+                / <span id="totalQuestions">10</span>
+            </div>
+
+            <div class="timer">
+                ⏱️ <span id="timer">30</span>s
+            </div>
+
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <h2 class="question" id="question">
+            Question
+        </h2>
+
+        <div class="answers" id="answers">
+            <!-- Réponses générées en JavaScript -->
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <div class="next-container">
+
+            <button
+                class="btn btn-primary"
+                id="nextBtn"
+                onclick="nextQuestion()">
+                Question suivante →
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================
+         RESULTAT
+    ================================= -->
+
+    <section class="result-screen" id="resultScreen">
+
+        <div class="result-icon">🏆</div>
+
+        <h2>Quiz terminé !</h2>
+
+        <div class="score">
+            <span id="finalScore">0</span>/100
+        </div>
+
+        <p class="result-message" id="resultMessage">
+            Bravo !
+        </p>
+
+        <div class="result-details">
+
+            <div class="stat">
+                <strong id="correctAnswers">0</strong>
+                Bonnes réponses
+            </div>
+
+            <div class="stat">
+                <strong id="wrongAnswers">0</strong>
+                Mauvaises réponses
+            </div>
+
+            <div class="stat">
+                <strong id="percentage">0%</strong>
+                Réussite
+            </div>
+
+        </div>
+
+        <button
+            class="btn btn-primary"
+            onclick="restartQuiz()">
+            🔄 Rejouer
+        </button>
+
+    </section>
+
+</main>
+
+<footer>
+    RH Challenge © 2026 — Quiz pédagogique Ressources Humaines
+</footer>
+
+
+<script>
+
+    /* =====================================
+       QUESTIONS DU QUIZ
+    ====================================== */
+
+    const questions = [
+
+        {
+            question: "Quel est l'objectif principal de la fonction Ressources Humaines ?",
+            answers: [
+                "Gérer uniquement les salaires",
+                "Gérer et développer le capital humain de l'entreprise",
+                "Contrôler uniquement les employés",
+                "Organiser uniquement les congés"
+            ],
+            correct: 1,
+            explanation:
+                "La fonction RH couvre notamment le recrutement, la gestion des compétences, la formation, la rémunération, le dialogue social et le développement des collaborateurs."
+        },
+
+        {
+            question: "Que signifie l'acronyme GPEC ?",
+            answers: [
+                "Gestion Prévisionnelle des Emplois et des Compétences",
+                "Gestion Permanente des Employés et des Contrats",
+                "Gestion Professionnelle des Équipes Commerciales",
+                "Gestion Préventive des Entreprises et des Collaborateurs"
+            ],
+            correct: 0,
+            explanation:
+                "GPEC signifie Gestion Prévisionnelle des Emplois et des Compétences."
+        },
+
+        {
+            question: "Quel document décrit principalement les missions et responsabilités d'un poste ?",
+            answers: [
+                "Le bulletin de salaire",
+                "Le contrat de travail",
+                "La fiche de poste",
+                "Le règlement intérieur"
+            ],
+            correct: 2,
+            explanation:
+                "La fiche de poste présente généralement les missions, responsabilités, activités, compétences et exigences liées à un poste."
+        },
+
+        {
+            question: "Quelle est la première étape d'un processus de recrutement ?",
+            answers: [
+                "L'intégration",
+                "L'identification du besoin",
+                "La signature du contrat",
+                "L'entretien annuel"
+            ],
+            correct: 1,
+            explanation:
+                "Le recrutement commence par l'identification et la clarification du besoin de l'entreprise."
+        },
+
+        {
+            question: "Qu'est-ce que l'onboarding ?",
+            answers: [
+                "Le départ d'un salarié",
+                "Le processus d'intégration d'un nouveau collaborateur",
+                "La gestion des absences",
+                "La gestion de la paie"
+            ],
+            correct: 1,
+            explanation:
+                "L'onboarding désigne le processus permettant d'accueillir, accompagner et intégrer un nouveau collaborateur."
+        },
+
+        {
+            question: "Quel indicateur permet notamment de mesurer les départs des salariés ?",
+            answers: [
+                "Le taux de turnover",
+                "Le chiffre d'affaires",
+                "Le taux de marge",
+                "Le budget formation"
+            ],
+            correct: 0,
+            explanation:
+                "Le turnover, ou taux de rotation du personnel, permet notamment d'analyser les entrées et sorties des collaborateurs."
+        },
+
+        {
+            question: "Pourquoi réalise-t-on un entretien annuel ?",
+            answers: [
+                "Uniquement pour sanctionner un salarié",
+                "Pour échanger notamment sur la performance et les objectifs",
+                "Pour supprimer les congés",
+                "Pour remplacer automatiquement le contrat de travail"
+            ],
+            correct: 1,
+            explanation:
+                "L'entretien annuel peut permettre de faire le point sur les objectifs, les résultats, les difficultés et les perspectives d'évolution."
+        },
+
+        {
+            question: "Quelle compétence est particulièrement importante pour un professionnel RH ?",
+            answers: [
+                "L'écoute",
+                "L'isolement",
+                "L'improvisation permanente",
+                "Le refus du dialogue"
+            ],
+            correct: 0,
+            explanation:
+                "L'écoute est une compétence essentielle en RH, notamment pour comprendre les besoins des collaborateurs et accompagner les situations professionnelles."
+        },
+
+        {
+            question: "Quel est l'intérêt principal de la formation professionnelle ?",
+            answers: [
+                "Réduire systématiquement les effectifs",
+                "Développer les compétences",
+                "Supprimer les entretiens",
+                "Éviter tout changement"
+            ],
+            correct: 1,
+            explanation:
+                "La formation contribue au développement et à l'adaptation des compétences des collaborateurs."
+        },
+
+        {
+            question: "Pourquoi la fonction RH est-elle considérée comme stratégique ?",
+            answers: [
+                "Parce qu'elle concerne uniquement l'administration",
+                "Parce qu'elle contribue à aligner les compétences et les personnes avec les objectifs de l'organisation",
+                "Parce qu'elle remplace la direction générale",
+                "Parce qu'elle gère uniquement les congés"
+            ],
+            correct: 1,
+            explanation:
+                "La fonction RH contribue à la performance organisationnelle en alignant les compétences, les talents et les pratiques RH avec les orientations de l'entreprise."
+        }
+
+    ];
+
+
+    /* =====================================
+       VARIABLES
+    ====================================== */
+
+    let currentIndex = 0;
+    let score = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+
+    let timer;
+    let timeLeft = 30;
+
+    const startScreen =
+        document.getElementById("startScreen");
+
+    const quizCard =
+        document.getElementById("quizCard");
+
+    const resultScreen =
+        document.getElementById("resultScreen");
+
+    const questionElement =
+        document.getElementById("question");
+
+    const answersElement =
+        document.getElementById("answers");
+
+    const timerElement =
+        document.getElementById("timer");
+
+    const feedbackElement =
+        document.getElementById("feedback");
+
+    const nextButton =
+        document.getElementById("nextBtn");
+
+    const progressBar =
+        document.getElementById("progressBar");
+
+
+    /* =====================================
+       DÉMARRER LE QUIZ
+    ====================================== */
+
+    function startQuiz() {
+
+        currentIndex = 0;
+        score = 0;
+        correctCount = 0;
+        wrongCount = 0;
+
+        startScreen.style.display = "none";
+        resultScreen.style.display = "none";
+        quizCard.style.display = "block";
+
+        document.getElementById("totalQuestions")
+            .textContent = questions.length;
+
+        showQuestion();
+    }
+
+
+    /* =====================================
+       AFFICHER UNE QUESTION
+    ====================================== */
+
+    function showQuestion() {
+
+        clearInterval(timer);
+
+        timeLeft = 30;
+
+        timerElement.textContent = timeLeft;
+
+        feedbackElement.className = "feedback";
+        feedbackElement.innerHTML = "";
+
+        nextButton.style.display = "none";
+
+        const current = questions[currentIndex];
+
+        document.getElementById("currentQuestion")
+            .textContent = currentIndex + 1;
+
+        questionElement.textContent =
+            current.question;
+
+        answersElement.innerHTML = "";
+
+        current.answers.forEach((answer, index) => {
+
+            const button = document.createElement("button");
+
+            button.classList.add("answer");
+
+            button.textContent =
+                `${String.fromCharCode(65 + index)}. ${answer}`;
+
+            button.onclick = () =>
+                selectAnswer(index);
+
+            answersElement.appendChild(button);
+
+        });
+
+        updateProgress();
+
+        startTimer();
+    }
+
+
+    /* =====================================
+       CHRONOMÈTRE
+    ====================================== */
+
+    function startTimer() {
+
+        timer = setInterval(() => {
+
+            timeLeft--;
+
+            timerElement.textContent = timeLeft;
+
+            if (timeLeft <= 0) {
+
+                clearInterval(timer);
+
+                timeOut();
+
+            }
+
+        }, 1000);
+
+    }
+
+
+    /* =====================================
+       TEMPS ÉCOULÉ
+    ====================================== */
+
+    function timeOut() {
+
+        const current = questions[currentIndex];
+
+        const buttons =
+            document.querySelectorAll(".answer");
+
+        buttons.forEach(button => {
+            button.disabled = true;
+        });
+
+        buttons[current.correct]
+            .classList.add("correct");
+
+        wrongCount++;
+
+        feedbackElement.className =
+            "feedback error show";
+
+        feedbackElement.innerHTML =
+            `<strong>⏰ Temps écoulé !</strong><br>
+             La bonne réponse était :
+             <strong>${current.answers[current.correct]}</strong>.<br>
+             ${current.explanation}`;
+
+        nextButton.style.display = "block";
+    }
+
+
+    /* =====================================
+       SÉLECTION DE LA RÉPONSE
+    ====================================== */
+
+    function selectAnswer(selectedIndex) {
+
+        clearInterval(timer);
+
+        const current = questions[currentIndex];
+
+        const buttons =
+            document.querySelectorAll(".answer");
+
+        buttons.forEach(button => {
+            button.disabled = true;
+        });
+
+        if (selectedIndex === current.correct) {
+
+            buttons[selectedIndex]
+                .classList.add("correct");
+
+            score += 10;
+            correctCount++;
+
+            feedbackElement.className =
+                "feedback success show";
+
+            feedbackElement.innerHTML =
+                `<strong>✓ Bonne réponse !</strong><br>
+                 ${current.explanation}`;
+
+        } else {
+
+            buttons[selectedIndex]
+                .classList.add("incorrect");
+
+            buttons[current.correct]
+                .classList.add("correct");
+
+            wrongCount++;
+
+            feedbackElement.className =
+                "feedback error show";
+
+            feedbackElement.innerHTML =
+                `<strong>✗ Mauvaise réponse.</strong><br>
+                 La bonne réponse était :
+                 <strong>${current.answers[current.correct]}</strong>.<br>
+                 ${current.explanation}`;
+
+        }
+
+        nextButton.style.display = "block";
+    }
+
+
+    /* =====================================
+       QUESTION SUIVANTE
+    ====================================== */
+
+    function nextQuestion() {
+
+        currentIndex++;
+
+        if (currentIndex < questions.length) {
+
+            showQuestion();
+
+        } else {
+
+            showResults();
+
+        }
+
+    }
+
+
+    /* =====================================
+       PROGRESSION
+    ====================================== */
+
+    function updateProgress() {
+
+        const progress =
+            ((currentIndex + 1) / questions.length) * 100;
+
+        progressBar.style.width =
+            progress + "%";
+
+    }
+
+
+    /* =====================================
+       AFFICHER LES RÉSULTATS
+    ====================================== */
+
+    function showResults() {
+
+        clearInterval(timer);
+
+        quizCard.style.display = "none";
+        resultScreen.style.display = "block";
+
+        document.getElementById("finalScore")
+            .textContent = score;
+
+        document.getElementById("correctAnswers")
+            .textContent = correctCount;
+
+        document.getElementById("wrongAnswers")
+            .textContent = wrongCount;
+
+        const percentage =
+            Math.round((correctCount / questions.length) * 100);
+
+        document.getElementById("percentage")
+            .textContent = percentage + "%";
+
+
+        let message = "";
+
+        if (percentage >= 90) {
+
+            message =
+                "🌟 Excellent ! Vous maîtrisez très bien les fondamentaux RH.";
+
+        } else if (percentage >= 70) {
+
+            message =
+                "👏 Très bon résultat ! Vos connaissances RH sont solides.";
+
+        } else if (percentage >= 50) {
+
+            message =
+                "👍 Bon début ! Quelques notions RH peuvent encore être renforcées.";
+
+        } else {
+
+            message =
+                "📚 Continuez à apprendre : la pratique vous permettra de progresser.";
+
+        }
+
+        document.getElementById("resultMessage")
+            .textContent = message;
+    }
+
+
+    /* =====================================
+       RECOMMENCER
+    ====================================== */
+
+    function restartQuiz() {
+
+        resultScreen.style.display = "none";
+
+        startScreen.style.display = "block";
+
+        progressBar.style.width = "0%";
+
+    }
+
+</script>
+
+</body>
+</html>
